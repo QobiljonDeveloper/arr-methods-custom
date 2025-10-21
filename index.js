@@ -1,35 +1,45 @@
-Array.prototype.filter2 = function (fn) {
-  const newArr = [];
-  for (let index = 0; index < this.length; index++) {
-    if (fn(this[index], index, this)) {
-      newArr.push(this[index]);
+// Bind
+function myBind(fn, thisArg, ...args) {
+  return function (...moreArgs) {
+    return fn.apply(thisArg, [...args, ...moreArgs]);
+  };
+}
+
+function greet(greeting, name) {
+  console.log(`${greeting}, ${name}! Men ${this.title}`);
+}
+
+const person = { title: "Qobiljon" };
+
+const boundGreet = myBind(greet, person, "Salom");
+boundGreet("Aziz");
+
+// All
+function myAll(promises) {
+  return new Promise((resolve, reject) => {
+    const results = [];
+    let completed = 0;
+
+    promises.forEach((promise, index) => {
+      Promise.resolve(promise)
+        .then((value) => {
+          results[index] = value;
+          completed++;
+          if (completed === promises.length) {
+            resolve(results);
+          }
+        })
+        .catch((err) => reject(err));
+    });
+
+    if (promises.length === 0) {
+      resolve([]);
     }
-  }
+  });
+}
 
-  return newArr;
-};
+const p1 = Promise.resolve(1);
+const p2 = Promise.resolve(2);
+const p3 = Promise.resolve(3);
 
-const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-arr.filter2((element, index, array) => element > 3);
-
-console.log(arr);
-
-Array.prototype.map2 = function (callback) {
-  const result = [];
-
-  for (let i = 0; i < this.length; i++) {
-    if (this[i]) {
-      const value = callback(this[i], i, this);
-      result.push(value);
-    }
-  }
-
-  return result;
-};
-
-const arr1 = arr.map2((num) => {
-  return num ** 2;
-});
-
-console.log(arr1);
+myAll([p1, p2, p3]).then(console.log);
