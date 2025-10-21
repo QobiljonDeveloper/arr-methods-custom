@@ -1,4 +1,3 @@
-// Bind
 function myBind(fn, thisArg, ...args) {
   return function (...moreArgs) {
     return fn.apply(thisArg, [...args, ...moreArgs]);
@@ -14,7 +13,6 @@ const person = { title: "Qobiljon" };
 const boundGreet = myBind(greet, person, "Salom");
 boundGreet("Aziz");
 
-// All
 function myAll(promises) {
   return new Promise((resolve, reject) => {
     const results = [];
